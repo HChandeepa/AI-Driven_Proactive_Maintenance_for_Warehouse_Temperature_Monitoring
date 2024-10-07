@@ -1,0 +1,13 @@
+blinker==1.8.2
+colorama==0.4.6
+itsdangerous==2.2.0
+joblib==1.4.2
+MarkupSafe==2.1.5
+numpy==2.0.2
+pytz==2024.2
+scipy==1.13.1
+six==1.16.0
+threadpoolctl==3.5.0
+tzdata==2024.2
+Werkzeug==3.0.4
+zipp==3.20.2
