@@ -1,34 +1,42 @@
 from flask import Flask, request, jsonify
-import joblib
-import numpy as np
+import pickle
+import pandas as pd
 
-# Load the pre-trained models
-rf_model = joblib.load('random_forest_model.pkl')
-lr_model = joblib.load('logistic_regression_model.pkl')
-svm_model = joblib.load('svm_model.pkl')
+# Load the Random Forest model from file
+with open('random_forest_model.pkl', 'rb') as rf_file:
+    random_forest_model = pickle.load(rf_file)
 
+# Initialize Flask app
 app = Flask(__name__)
 
-def predict_failure(model, temperature, humidity, hvac_status):
-    data = np.array([[temperature, humidity, hvac_status]])
-    return model.predict(data)[0]
+# Define the root route
+@app.route('/', methods=['GET'])
+def home():
+    return "Welcome to the AI-Driven Proactive Maintenance API"
 
+# Define the API route for making predictions
 @app.route('/predict', methods=['POST'])
 def predict():
+    # Get the JSON data from the request
     data = request.get_json()
-    temperature = data['Temperature']
-    humidity = data['Humidity']
-    hvac_status = data['HVAC_Status']
+    
+    # Convert data to a DataFrame
+    input_data = pd.DataFrame([data])
 
-    rf_prediction = predict_failure(rf_model, temperature, humidity, hvac_status)
-    lr_prediction = predict_failure(lr_model, temperature, humidity, hvac_status)
-    svm_prediction = predict_failure(svm_model, temperature, humidity, hvac_status)
-
-    return jsonify({
-        'Random Forest': rf_prediction,
-        'Logistic Regression': lr_prediction,
-        'SVM': svm_prediction
-    })
+    # Extract features: 'Temperature', 'Humidity', 'HVAC_Status'
+    features = ['Temperature', 'Humidity', 'HVAC_Status']
+    input_features = input_data[features]
+    
+    # Make prediction
+    prediction = random_forest_model.predict(input_features)[0]  # 0 or 1
+    
+    # Create response
+    result = {
+        'failure_risk': int(prediction)  # Convert NumPy integer to Python int
+    }
+    
+    # Return response as JSON
+    return jsonify(result)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0')
