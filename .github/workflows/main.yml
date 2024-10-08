@@ -1,0 +1,38 @@
+name: Flask API Deployment
+
+# Trigger the workflow on push to the master branch
+on:
+  push:
+    branches:
+      - master  # Change this if you use a different branch for production
+
+jobs:
+  build:
+    # The type of machine the workflow runs on
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Step 2: Set up Python
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'  # Use the version of Python that your Flask app requires
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run tests (Optional)
+    - name: Run tests
+      run: |
+        pytest  # Make sure to configure your tests if you have any
+
+    # Step 5: Deploy to the cloud
+    # This step will depend on where you're deploying
+    # Add deployment steps here for services like Heroku, Render, or other platforms
