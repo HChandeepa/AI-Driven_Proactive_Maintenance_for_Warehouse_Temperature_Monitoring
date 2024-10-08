@@ -1,7 +1,7 @@
 app = "ai-driven-proactive-maintenance-for-warehouse-temperature-monitoring"
 
 [deploy]
-  release_command = "flask run"
+  release_command = "flask run"  # This may need to be adjusted depending on how your app is structured
 
 [env]
   PORT = "8080"
@@ -11,7 +11,7 @@ app = "ai-driven-proactive-maintenance-for-warehouse-temperature-monitoring"
   auto_rollback = true
 
 [[services]]
-  internal_port = 8080
+  internal_port = 8080            # The port your Flask app listens on
   protocol = "tcp"
 
 [services.concurrency]
@@ -20,5 +20,5 @@ app = "ai-driven-proactive-maintenance-for-warehouse-temperature-monitoring"
   soft_limit = 20
 
 [[services.ports]]
-  port = 80
+  port = 80                       # The port that will be publicly accessible
   handlers = ["http"]
